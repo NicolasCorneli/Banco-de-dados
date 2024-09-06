@@ -1,0 +1,21 @@
+2) (Questão de concurso) O PostgreSQL permite criar funções para facilitar operações
+diárias e abstrair a complexidade na leitura e utilização dos códigos. Isto posto,
+analise a função a seguir:
+
+CREATE OR REPLACE FUNCTION totalProcessos (integer)
+RETURNS integer AS $total$
+declare
+total integer;
+BEGIN
+SELECT count(*) into total FROM processo where id <= $1;
+RETURN total;
+END;
+$total$ LANGUAGE plpgsql;
+
+Sobre essa função, é correto afirmar que ela:
+A) não recebe parâmetros e retorna um texto.
+B) retorna um número de ponto flutuante.
+C) retorna um número do tipo inteiro.
+D) não pode ser invocada em uma outra consulta.
+
+Letra C - retorna um número do tipo inteiro.
