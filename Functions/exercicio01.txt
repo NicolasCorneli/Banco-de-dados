@@ -1,0 +1,17 @@
+1) (Questão de concurso) A função no POSTGRESQL abaixo serve para:
+CREATE OR REPLACE FUNCTION addition (integer,
+integer) RETURNS integer
+AS $$
+DECLARE retval integer;
+BEGIN
+SELECT $1 + $2 INTO retval;
+RETURN retval;
+END;
+$$ LANGUAGE plpgsql;
+Alternativas:
+A) Somar dois valores inteiros e retornar um valor inteiro.
+B) Encontrar as duas constantes $1 e $2 em uma das tabelas do banco de dados.
+C) Selecionar duas tabelas e retornar uma coluna inteira de uma das duas tabelas.
+D) Definir qual dos dois número é um número primo.
+
+Letra A - Somar dois valores inteiros e retornar um valor inteiro.
