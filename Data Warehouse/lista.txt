@@ -1,0 +1,19 @@
+Resposta: A) venda, como tabela fato; cliente e vendedor, como tabelas dimensão
+
+Explicação: Em um modelo estrela, a tabela fato armazena as medidas principais de interesse (nesse caso, "venda") e está cercada por tabelas de dimensão (cliente e vendedor), que fornecem detalhes sobre os dados armazenados na tabela fato.
+
+Resposta: C) possui milhares de usuários de diferentes níveis hierárquicos dentro da organização
+
+Explicação: Data warehouses são projetados para atender às necessidades de relatórios e análises de uma organização, abrangendo diferentes níveis hierárquicos, enquanto bancos de dados transacionais (OLTP) focam em operações diárias de processamento de transações.
+
+Resposta: C) proporcionar um ambiente que permita realizar análise dos negócios de uma empresa com base nos dados por ela armazenados
+
+Explicação: Data warehouses são projetados para análise de dados históricos e suporte à tomada de decisões, fornecendo uma visão consolidada dos negócios.
+
+Resposta: B) a fase de transformação consiste em realizar modificações nos dados carregados, adequando seus valores ao modelo definido para o data warehouse
+
+Explicação: A fase de transformação no processo de ETL envolve modificar e adequar os dados ao modelo do data warehouse, garantindo que estejam prontos para análise.
+
+Resposta: B) sumarizados de toda a empresa para apoio à decisão e utilização de ferramentas OLAP
+
+Explicação: Data warehouses armazenam dados consolidados e sumarizados de toda a organização, permitindo análises de apoio à decisão com ferramentas OLAP.
