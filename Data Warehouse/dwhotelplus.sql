@@ -12,7 +12,7 @@ CREATE TABLE dim_cliente (
 
 CREATE TABLE dim_quarto (
     quarto_sk SERIAL PRIMARY KEY, 
-    quarto_id INT UNIQUE
+    quarto_id INT UNIQUE,
     tipo_quarto VARCHAR(50),
     status_manutencao VARCHAR(50),
     data_ultima_reforma DATE
@@ -39,9 +39,9 @@ CREATE TABLE dim_data (
 
 CREATE TABLE fato_reserva (
     reserva_sk SERIAL PRIMARY KEY, 
-    cliente_sk INT REFERENCES dim_cliente(cliente_sk), 
-    quarto_sk INT REFERENCES dim_quarto(quarto_sk),  
-    hotel_sk INT REFERENCES dim_hotel(hotel_sk), 
+    cliente_id INT REFERENCES dim_cliente(cliente_id), 
+    quarto_id INT REFERENCES dim_quarto(quarto_id),  
+    hotel_id INT REFERENCES dim_hotel(hotel_id), 
     data_id INT REFERENCES dim_data(data_id), 
     valor_total_reserva NUMERIC(10, 2),
     data_checkin DATE,
@@ -76,56 +76,40 @@ VALUES
     ('2023-10-01', 2023, 10, 1, 'Domingo'),
     ('2023-10-02', 2023, 10, 2, 'Segunda-feira');
 
-INSERT INTO fato_reserva (cliente_sk, quarto_sk, hotel_sk, data_id, valor_total_reserva, data_checkin, data_checkout)
+INSERT INTO fato_reserva (cliente_id, quarto_id, hotel_id, data_id, valor_total_reserva, data_checkin, data_checkout)
 VALUES
     (1, 101, 1, 1, 500.00, '2023-10-01', '2023-10-04'),
     (2, 102, 2, 2, 1200.00, '2023-10-02', '2023-10-07');
+
 
 INSERT INTO fato_receita (hotel_sk, data_id, receita_total_diaria, despesas_operacionais_diarias)
 VALUES
     (1, 1, 1500.00, 800.00),
     (2, 2, 2000.00, 900.00);
 
--- 1. Qual é a receita média por cliente em cada categoria de fidelidade?
+-- 1. receita média por cliente
 SELECT 
     c.categoria_fidelidade,
     AVG(fr.valor_total_reserva) AS receita_media_por_cliente
 FROM 
     fato_reserva fr
 JOIN 
-    dim_cliente c ON fr.cliente_sk = c.cliente_sk
+    dim_cliente c ON fr.cliente_id = c.cliente_id 
 GROUP BY 
     c.categoria_fidelidade;
 
--- 2. Quais hotéis possuem as taxas de ocupação mais altas em um período específico?
-SELECT 
-    h.nome_hotel,
-    COUNT(fr.reserva_sk) * 100.0 / COUNT(dq.quarto_sk) AS taxa_ocupacao
-FROM 
-    fato_reserva fr
-JOIN 
-    dim_quarto dq ON fr.quarto_sk = dq.quarto_sk
-JOIN 
-    dim_hotel h ON fr.hotel_sk = h.hotel_sk
-WHERE 
-    fr.data_checkin BETWEEN '2023-10-01' AND '2023-10-31'  -- Período específico
-GROUP BY 
-    h.nome_hotel
-ORDER BY 
-    taxa_ocupacao DESC;
+-- 2. taxa de ocupação
 
--- 3. Qual a média de tempo que os clientes de uma determinada categoria de fidelidade permanecem nos hotéis?
+-- 3. duração média de permanência
 SELECT 
     c.categoria_fidelidade,
-    AVG(EXTRACT(DAY FROM (fr.data_checkout - fr.data_checkin))) AS media_duracao_permanencia
-FROM 
-    fato_reserva fr
-JOIN 
-    dim_cliente c ON fr.cliente_sk = c.cliente_sk
-GROUP BY 
-    c.categoria_fidelidade;
+    AVG(DATE(fr.data_checkout) - DATE(fr.data_checkin)) AS media_duracao_permanencia
+FROM fato_reserva fr
+JOIN dim_cliente c ON fr.cliente_id = c.cliente_id
+WHERE c.categoria_fidelidade = 'Ouro' 
+GROUP BY c.categoria_fidelidade;
 
--- 4. Quais quartos são mais frequentemente reformados, e com que frequência?
+-- 4. reforma de quartos
 SELECT 
     dq.quarto_id,
     COUNT(dq.data_ultima_reforma) AS numero_de_reformas,
@@ -139,7 +123,7 @@ GROUP BY
 ORDER BY 
     numero_de_reformas DESC;
 
--- 5. Qual o perfil dos clientes com maior gasto em reservas por país e categoria de fidelidade?
+-- 5. perfil de clientes com maior gasto
 SELECT 
     h.pais,
     c.categoria_fidelidade,
@@ -148,9 +132,9 @@ SELECT
 FROM 
     fato_reserva fr
 JOIN 
-    dim_cliente c ON fr.cliente_sk = c.cliente_sk
+    dim_cliente c ON fr.cliente_id = c.cliente_id
 JOIN 
-    dim_hotel h ON fr.hotel_sk = h.hotel_sk
+    dim_hotel h ON fr.hotel_id = h.hotel_id
 GROUP BY 
     h.pais, c.categoria_fidelidade, c.nome
 ORDER BY 
